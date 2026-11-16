@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Google Antigravity models",
+    "description": "Run Gemini, Claude, and GPT-OSS models from your Google Antigravity subscription inside DeepSeek Harness, with a live 5-hour and weekly quota chip.",
+    "detail": "docs/DETAIL.md"
+  }
+}

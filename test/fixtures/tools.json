@@ -1,0 +1,62 @@
+[
+  {
+    "name": "run_command",
+    "description": "Run a shell command in the workspace and return its output.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": { "type": "string", "description": "Command line to execute." },
+        "workdir": { "type": "string", "description": "Working directory; defaults to the session workspace." },
+        "timeoutMs": { "type": "number", "description": "Timeout in milliseconds." },
+        "background": { "type": "boolean", "description": "Run the command as a background job." }
+      },
+      "required": ["command"]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Read a UTF-8 text file and return numbered lines.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string", "description": "File path relative to the workspace." },
+        "offset": { "type": "integer", "description": "1-based first line to return." },
+        "limit": { "type": "integer", "description": "Maximum number of lines to return." }
+      },
+      "required": ["path"]
+    }
+  },
+  {
+    "name": "edit_file",
+    "description": "Replace literal text in an existing UTF-8 file.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "old_string": { "type": "string" },
+        "new_string": { "type": "string" },
+        "replace_all": { "type": "boolean" }
+      },
+      "required": ["path", "old_string", "new_string"]
+    }
+  },
+  {
+    "name": "web_search",
+    "description": "Search the web and return sources.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "queries": { "type": "array", "items": { "type": "string" } },
+        "options": {
+          "type": "object",
+          "properties": {
+            "limit": { "type": "integer", "minimum": 1, "maximum": 20 },
+            "locale": { "type": "string", "enum": ["en", "ru", "de"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["queries"]
+    }
+  }
+]

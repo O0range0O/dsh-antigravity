@@ -1,0 +1,6 @@
+- insert:
+    - id: llm-antigravity
+      name: dsh-antigravity
+      config:
+        displayName: Google Antigravity
+        proxy: ''

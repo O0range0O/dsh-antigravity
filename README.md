@@ -39,6 +39,9 @@ shows how much of the 5-hour and weekly limits you have used.
   On macOS/Linux, or when you prefer not to reuse the app's login, supply a refresh token yourself
   through `DSH_ANTIGRAVITY_REFRESH_TOKEN` or the `tokenFile` config (see [Sign-in](#sign-in)).
 - The Antigravity desktop app installed and signed in **or** a refresh token in the environment.
+  The public OAuth client needed to refresh that token is read from the installed Antigravity
+  binary at runtime; if it is not found, set `DSH_ANTIGRAVITY_CLIENT_ID` and
+  `DSH_ANTIGRAVITY_CLIENT_SECRET` (or the matching config fields).
 - A working proxy/VPN when Google geo-blocks your location.
 
 ## Install
@@ -77,8 +80,11 @@ The plugin never ships credentials. It resolves them at runtime, in this order:
 3. The Windows Credential Manager entry `gemini:antigravity`, written by the Antigravity app.
 
 Access tokens are refreshed with Antigravity's public desktop OAuth client and cached in
-`$DSH_HOME/antigravity/auth.json` (mode `0600` where the platform supports it). To force a new
-import, delete that file; if Google revoked the grant, open Antigravity and sign in again.
+`$DSH_HOME/antigravity/auth.json` (mode `0600` where the platform supports it). The public OAuth
+client pair itself is resolved at runtime — environment variables, then config fields, then a local
+cache, then extracted from the installed Antigravity binary — so this repository contains no client
+credentials. To force a new import, delete `$DSH_HOME/antigravity/auth.json`; if Google revoked the
+grant, open Antigravity and sign in again.
 
 ## Configuration
 
@@ -99,6 +105,7 @@ The bundle's patch inserts one loader row, `llm-antigravity`. Its `config` accep
 | `retryMaxRetries` | `7` | Harness retries on throttling or transient failures. |
 | `retryMaxDelayMs` | `30000` | Longest backoff between those retries. |
 | `quotaTtlMs` | `60000` | How long the quota chip reuses one quota read. |
+| `oauthClientId` / `oauthClientSecret` | auto | Public Antigravity OAuth client used for token refresh; detected from the installed app when omitted. |
 | `extraModels` | `[]` | Extra backend model ids to advertise beyond discovery. |
 
 Edit the row in the profile's `cordis.patch.yml` (or through the plugin's config surface); the patch
@@ -139,9 +146,8 @@ a proxy.
 ## Security and privacy
 
 - The repository contains no credentials, tokens, email addresses, machine paths, or proxy ports.
-  `lib/auth.js` does embed the Antigravity desktop app's **public OAuth client id/secret** — the same
-  pair shipped inside Google's application and required to refresh the grant; it is not a user
-  credential.
+  The public OAuth client pair is not stored here: it is read from the installed Antigravity
+  application (or from environment/config) and cached locally under `$DSH_HOME/antigravity/`.
 - The plugin reads this machine's Antigravity sign-in and keeps the refreshed token under
   `$DSH_HOME/antigravity/auth.json`; it never transmits it anywhere except Google's OAuth endpoint.
 - The quota HTTP route is served on the local Web host and authorizes the page through the

@@ -19,6 +19,14 @@ Maintained by [O0range0O](https://github.com/O0range0O).
 - **Models**: the account's actual catalog via `fetchAvailableModels` — Gemini 3.x/2.5, Claude
   Sonnet/Opus, GPT-OSS where the plan includes them. They appear in the normal model picker under
   **Google Antigravity**.
+- **Vision**: images attached to a message and images returned by tools are sent inline to models the
+  backend marks as image-capable (Gemini and Claude families); over-budget images keep a
+  deterministic text placeholder instead of failing the request.
+- **Efforts like the DeepSeek route**: `off`, `low`, `high`, and `max`, mapped onto Gemini thinking
+  levels or thinking budgets (and disabled thinking where the provider allows it).
+- **Model switching**: tool history produced by another provider carries no Gemini thought
+  signatures; for Gemini 3+ those function calls are replayed with the documented
+  `skip_thought_signature_validator` sentinel so the switch does not fail.
 - **Streaming**: text and reasoning deltas, usage reporting, tool calls mapped from harness
   `ToolSchema` to Gemini `functionDeclarations`, and thinking-signature replay for multi-turn tool use.
 - **Quota chip**: used percentage of the 5-hour and weekly windows for the selected model's group,
@@ -72,7 +80,9 @@ profile and records the bundle selection.
 1. Open the model selector in the composer and pick a model under **Google Antigravity**.
 2. The quota chip beside the model controls shows `5h X% · wk Y%` (used). Hover for all groups and
    reset times; click to refresh.
-3. Selecting the model for a session is enough — nothing else needs configuring.
+3. Text-only models (`GPT-OSS`) show attached images as deterministic placeholders; Gemini and Claude
+   models receive them inline and can describe or read them.
+4. Selecting the model for a session is enough — nothing else needs configuring.
 
 ## Sign-in
 
@@ -143,6 +153,7 @@ node test/e2e.mjs claude              # same on claude-sonnet-4-6
 node test/real-tools.mjs              # tool-schema conversion + tool round-trip
 node test/proxy-audit.mjs             # every request goes through the configured proxy
 node test/quota-api.mjs               # quota summary normalization + live read
+node test/image-convert.mjs           # offline: image parts, signature fallback, effort mapping
 ```
 
 Set `AGY_PROXY=direct` to force a direct connection (TUN mode) or `AGY_PROXY=http://host:port` to pin

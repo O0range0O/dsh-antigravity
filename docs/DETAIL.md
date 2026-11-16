@@ -11,6 +11,16 @@ and sign-in already present on the machine.
   composer's model selector.
 - Streams text and reasoning, maps harness tool definitions onto Gemini `functionDeclarations`,
   returns tool calls to the agent loop, and preserves thinking signatures for multi-turn tool use.
+- Sends images from user messages and tool results inline to models the backend marks as
+  image-capable (Gemini and Claude). Images are read through the harness attachment service, resized
+  to a 1568 px long edge and at most 2 MB each; at most 24 images per request are retained, and an
+  over-budget image keeps a deterministic text placeholder.
+- Exposes the DeepSeek reasoning effort vocabulary `off`/`low`/`high`/`max` (legacy `medium` maps to
+  `high`), translated to Gemini thinking levels or thinking budgets per model family; Claude gets no
+  thinking configuration for `off`.
+- Replays tool history produced by other providers with the documented
+  `skip_thought_signature_validator` sentinel on Gemini 3+, so switching the model mid-session keeps
+  working without native signatures.
 - **Quota chip**: a compact pill in the composer tool row shows the used percentage of the
   Antigravity 5-hour and weekly windows for the group that owns the selected model (Gemini vs
   Claude/GPT). Hovering lists every group with used percentage and reset time; clicking forces a
@@ -88,8 +98,9 @@ the proxy, run `node test/proxy-audit.mjs`.
   support for third-party clients. Treat it as an unofficial integration of your own subscription;
   Google can change or police it at any time.
 - The backend geo-gates by client IP; a proxy/VPN is required in unsupported locations.
-- Only text input is wired: images and files are projected to deterministic placeholders by the
-  harness, exactly as for any text-only provider.
+- Images are supported on vision-capable models only; text-only routes (`GPT-OSS`) receive the
+  harness placeholder projection. Audio, video, and native file attachments are not wired — files
+  are still projected to text handles, and the agent reads them with its tools.
 - No vision, no Google Search grounding, and no quota page beyond the chip.
 - Model availability and per-model quotas are whatever the backend advertises; a listed model can
   still answer `429 RESOURCE_EXHAUSTED` when its own capacity is throttled.

@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.1.0 — 2026-11-16
+
+Parity release: the Antigravity route now behaves like a first-class provider inside the harness.
+
+- Image input: user attachments and tool-result images are read through the harness attachment
+  service and sent inline to vision-capable models (Gemini, Claude). Images over the inline budget
+  (24 images, 2 MB each after resize, long edge 1568 px) keep a deterministic placeholder.
+- DeepSeek-style reasoning efforts `off`/`low`/`high`/`max` replace `low`/`medium`/`high`;
+  `medium` selections from existing sessions are treated as `high`.
+- Tool history from another provider replays with the documented
+  `skip_thought_signature_validator` sentinel on Gemini 3+, so switching models mid-session no
+  longer fails with "missing thought_signature".
+- Model metadata advertises the `image` input modality only for models the backend marks as
+  image-capable; text-only routes keep the harness placeholder projection.
+- New offline regression test `test/image-convert.mjs`.
+
 ## 1.0.0 — 2026-11-16
 
 First public release.

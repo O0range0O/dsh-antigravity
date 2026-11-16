@@ -4,6 +4,15 @@
   "type": "module",
   "description": "Google Antigravity subscription models (Gemini, Claude, GPT-OSS) for DeepSeek Harness, with a live 5-hour/weekly quota chip",
   "license": "MIT",
+  "author": "O0range0O (https://github.com/O0range0O)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/O0range0O/dsh-antigravity.git"
+  },
+  "homepage": "https://github.com/O0range0O/dsh-antigravity#readme",
+  "bugs": {
+    "url": "https://github.com/O0range0O/dsh-antigravity/issues"
+  },
   "keywords": [
     "deepseek-harness",
     "dsh",

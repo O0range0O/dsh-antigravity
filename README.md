@@ -8,23 +8,25 @@ The plugin reuses the sign-in that the Antigravity app already stores on this ma
 the same Cloud Code Assist backend the IDE uses. It also adds a **quota chip** to the composer that
 shows how much of the 5-hour and weekly limits you have used.
 
+Maintained by [O0range0O](https://github.com/O0range0O).
+
 > **Unofficial integration.** It targets an internal Google endpoint that is not documented or
 > supported for third-party clients. Use it only with your own subscription, and expect Google to
 > change or restrict it at any time. See [Disclaimer](#disclaimer).
 
 ## Features
 
-- **Models**: the account's actual catalog via `fetchAvailableModels` вЂ” Gemini 3.x/2.5, Claude
+- **Models**: the account's actual catalog via `fetchAvailableModels` — Gemini 3.x/2.5, Claude
   Sonnet/Opus, GPT-OSS where the plan includes them. They appear in the normal model picker under
   **Google Antigravity**.
 - **Streaming**: text and reasoning deltas, usage reporting, tool calls mapped from harness
   `ToolSchema` to Gemini `functionDeclarations`, and thinking-signature replay for multi-turn tool use.
 - **Quota chip**: used percentage of the 5-hour and weekly windows for the selected model's group,
   hover breakdown for every group with reset times, click to refresh, automatic refresh once a minute.
-- **Proxy aware**: every request вЂ” OAuth refresh, discovery, inference, quota вЂ” goes through one
+- **Proxy aware**: every request — OAuth refresh, discovery, inference, quota — goes through one
   proxy route. Auto mode follows `HTTPS_PROXY`/`HTTP_PROXY`/`ALL_PROXY`, then the Windows system
-  proxy, re-resolves while running, and falls back in both directions (unreachable proxy в†’ direct;
-  geo-blocked direct в†’ system proxy). The Antigravity backend geo-gates by client IP, so a proxy or
+  proxy, re-resolves while running, and falls back in both directions (unreachable proxy → direct;
+  geo-blocked direct → system proxy). The Antigravity backend geo-gates by client IP, so a proxy or
   VPN is required in unsupported regions.
 - **Long retries**: per-model `429 RESOURCE_EXHAUSTED` throttling is retried for about 90 seconds
   before an error that names alternative models.
@@ -46,11 +48,13 @@ shows how much of the 5-hour and weekly limits you have used.
 
 ## Install
 
-The bundle is a plain directory; install it with DeepSeek Harness' own plugin manager.
+Download `dsh-antigravity-1.0.0.zip` from the
+[latest release](https://github.com/O0range0O/dsh-antigravity/releases) and unpack it, or clone this
+repository. The bundle is a plain directory; install it with DeepSeek Harness' own plugin manager.
 
 From the GUI:
 
-1. **Plugins в†’ Add plugin**
+1. **Plugins → Add plugin**
 2. Choose the cloned directory (the one containing `package.json`)
 3. Refresh the page once so the Client module (quota chip) loads.
 
@@ -60,15 +64,15 @@ From an agent session with the `plugin_manager` tool:
 plugin_manager install_bundle target=<absolute path to this directory>
 ```
 
-Do not copy files into `$DSH_HOME` by hand вЂ” the plugin manager links the directory into the current
+Do not copy files into `$DSH_HOME` by hand — the plugin manager links the directory into the current
 profile and records the bundle selection.
 
 ## Use
 
 1. Open the model selector in the composer and pick a model under **Google Antigravity**.
-2. The quota chip beside the model controls shows `5h X% В· wk Y%` (used). Hover for all groups and
+2. The quota chip beside the model controls shows `5h X% · wk Y%` (used). Hover for all groups and
    reset times; click to refresh.
-3. Selecting the model for a session is enough вЂ” nothing else needs configuring.
+3. Selecting the model for a session is enough — nothing else needs configuring.
 
 ## Sign-in
 
@@ -113,24 +117,25 @@ layer is preserved across upgrades.
 
 ## Troubleshooting
 
-- **`429 RESOURCE_EXHAUSTED` with a long retry chain** вЂ” Google throttles per model. The plugin
+- **`429 RESOURCE_EXHAUSTED` with a long retry chain** — Google throttles per model. The plugin
   retries for about 90 seconds; if it still fails, wait a minute or switch to another model
   (for example Gemini 3.8 Flash (Medium) / Gemini 3 Flash / Claude Sonnet 4.6).
-- **`User location is not supported`** вЂ” the backend geo-gates by client IP. Configure `proxy` or
+- **`User location is not supported`** — the backend geo-gates by client IP. Configure `proxy` or
   enable the same VPN the Antigravity IDE uses. Auto mode normally finds the system proxy already.
-- **Prompt rejection (`429` right after a prompt that mentions the harness)** вЂ” some first-person
+- **Prompt rejection (`429` right after a prompt that mentions the harness)** — some first-person
   system-prompt phrases are rejected by the backend with a misleading quota error. The adapter
   detects them and delivers those paragraphs through the opening user turn instead; unknown shapes
   are retried once as user content.
-- **No quota chip** вЂ” refresh the page once after installing (the Client module loads with the
+- **No quota chip** — refresh the page once after installing (the Client module loads with the
   page). The chip also needs the plugin to be enabled; hover over a grey chip to see the error.
-- **Model request fails right after boot** вЂ” the VPN/proxy client may still be starting. Retry once;
+- **Model request fails right after boot** — the VPN/proxy client may still be starting. Retry once;
   the transport re-resolves the route automatically.
-- **Logs** вЂ” `$DSH_HOME/antigravity/plugin.log`.
+- **Logs** — `$DSH_HOME/antigravity/plugin.log`.
 
 ## Tests
 
-Live checks against the real backend (they use this machine's sign-in, no credentials in the repo):
+Live checks against the real backend (they use the local machine's Antigravity sign-in, no credentials
+in the repo):
 
 ```
 node test/e2e.mjs                     # catalog, text turn, tool round-trip
@@ -160,5 +165,8 @@ a proxy.
 
 This project is not affiliated with Google or DeepSeek. Antigravity's inference endpoint is a
 private API: it may violate Google's terms of service, and accounts that automate it can be
-restricted. It is provided for personal use with your own subscription, without warranty. See
-[LICENSE](LICENSE).
+restricted. It is provided for personal use with your own subscription, without warranty.
+
+## License
+
+MIT — see [LICENSE](LICENSE). Copyright (c) 2026 O0range0O.
